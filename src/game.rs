@@ -55,10 +55,19 @@ pub fn process_input(
 }
 
 pub fn detect_collision(player: &mut Player, death_block: &mut DeathBlock) {
-  if player.pos_y + player.width > death_block.pos_y
-      && player.pos_x + player.width > death_block.pos_x
-  {
-      player.state = PlayerState::Dieing;
-      death_block.color = 0x000000;
-  }
+    if 
+        is_point_in_rect(&death_block.pos_x, &death_block.pos_y, &death_block.width, &player.pos_x, &player.pos_y) || 
+        is_point_in_rect(&death_block.pos_x, &death_block.pos_y, &death_block.width, &(&player.pos_x + &player.width), &player.pos_y) ||
+        is_point_in_rect(&death_block.pos_x, &death_block.pos_y, &death_block.width, &player.pos_x, &(&player.pos_y + &player.width)) ||
+        is_point_in_rect(&death_block.pos_x, &death_block.pos_y, &death_block.width, &(&player.pos_x + &player.width), &(&player.pos_y + &player.width))
+    {
+        player.state = PlayerState::Dieing;
+        death_block.color = 0x000000;
+    }
+}
+
+
+fn is_point_in_rect(rect_x: &usize, rect_y: &usize, width: &usize, point_x: &usize, point_y: &usize) -> bool{
+    return rect_x <= point_x && rect_x + width >= *point_x &&
+        rect_y <= point_y && rect_y + width >= *point_y;
 }
