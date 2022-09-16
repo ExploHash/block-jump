@@ -5,16 +5,15 @@ mod actors {
     pub mod player;
 }
 
-mod render;
 mod game;
+mod render;
 
-use std::time::{SystemTime};
-use std::usize;
 use minifb::{Key, Window, WindowOptions};
+use std::time::SystemTime;
+use std::usize;
 
 pub const WIDTH: usize = 640;
 pub const HEIGHT: usize = 360;
-
 
 fn main() {
     let mut buffer: Vec<u32>;
@@ -34,7 +33,7 @@ fn main() {
 
     //initialize actors
     let mut player = actors::player::initialize_player();
-    let mut death_block =  actors::death_block::initialize_death_block();
+    let mut death_block = actors::death_block::initialize_death_block();
 
     //Intialize stats
     let mut score: usize = 0;
@@ -61,8 +60,6 @@ fn main() {
             &50,
             0xFFFFFF,
         );
-        //Detect collision
-        game::detect_collision(&mut player, &mut death_block);
         //Process input
         game::process_input(&window, &mut player, &mut death_block, &mut score);
         //Update state
@@ -71,13 +68,9 @@ fn main() {
         //Draw
         actors::player::draw_player(&mut buffer, &player);
         actors::death_block::draw_death_block(&mut buffer, &death_block);
+        //Detect collision
+        game::detect_collision(&mut player, &mut death_block);
         // Update the window
         window.update_with_buffer(&buffer, WIDTH, HEIGHT).unwrap();
     }
 }
-
-
-
-
-
-

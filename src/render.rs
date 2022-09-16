@@ -1,5 +1,5 @@
-use font8x8::{UnicodeFonts, BASIC_FONTS};
 use crate::WIDTH;
+use font8x8::{UnicodeFonts, BASIC_FONTS};
 
 pub fn render_text(
     buffer: &mut Vec<u32>,

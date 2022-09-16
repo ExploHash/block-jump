@@ -1,4 +1,4 @@
-use crate::{HEIGHT, render};
+use crate::{render, HEIGHT};
 
 pub enum PlayerState {
     Jumping,
@@ -55,7 +55,7 @@ pub fn update_player_state(player: &mut Player) {
             } else {
                 player.state = PlayerState::Existing;
             }
-        },
+        }
         _ => {}
     }
 }
