@@ -4,6 +4,9 @@ use player::{Player, PlayerState};
 
 use minifb::{Key, Window};
 use std::time::SystemTime;
+use crate::render;
+
+use std::fs;
 
 pub fn update_tick(last_tick: &mut SystemTime, tick: &mut u64) -> bool {
     let duration = SystemTime::now().duration_since(*last_tick).expect("REEE");
@@ -70,4 +73,34 @@ pub fn detect_collision(player: &mut Player, death_block: &mut DeathBlock) {
 fn is_point_in_rect(rect_x: &usize, rect_y: &usize, width: &usize, point_x: &usize, point_y: &usize) -> bool{
     return rect_x <= point_x && rect_x + width >= *point_x &&
         rect_y <= point_y && rect_y + width >= *point_y;
+}
+
+pub fn update_highscore(player: &mut Player, score: &usize, highscore: &mut usize) {
+    if let PlayerState::Dieing = player.state {
+        if score > &*highscore {
+            fs::write("highscore.txt", score.to_string())
+                .expect("Failed writing highscore file");
+           *highscore = *score;
+        }
+    }
+}
+
+pub fn draw_gui(buffer: &mut Vec<u32>, score: &usize, highscore: &usize){
+    render::draw_background(buffer);
+    //Draw Points
+    render::render_text(
+        buffer,
+        &("Score: ".to_owned() + &score.to_string()),
+        &50,
+        &50,
+        0xFFFFFF,
+    );
+
+    render::render_text(
+        buffer,
+        &("HighScore: ".to_owned() + &highscore.to_string()),
+        &200,
+        &50,
+        0xFFFF
+    )
 }

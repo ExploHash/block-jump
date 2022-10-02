@@ -11,6 +11,7 @@ mod render;
 use minifb::{Key, Window, WindowOptions};
 use std::time::SystemTime;
 use std::usize;
+use std::fs;
 
 pub const WIDTH: usize = 640;
 pub const HEIGHT: usize = 360;
@@ -37,6 +38,11 @@ fn main() {
 
     //Intialize stats
     let mut score: usize = 0;
+    
+    //Initialize highscore
+    let highscore_string = fs::read_to_string("highscore.txt")
+        .expect("Failed reading highscore file");
+    let mut highscore = highscore_string.parse::<usize>().unwrap();
 
     //Timing
     let mut last_tick = SystemTime::now();
@@ -51,15 +57,7 @@ fn main() {
 
         //Clear
         buffer = vec![0; WIDTH * HEIGHT];
-        render::draw_background(&mut buffer);
-        //Draw gui
-        render::render_text(
-            &mut buffer,
-            &("Score: ".to_owned() + &score.to_string()),
-            &50,
-            &50,
-            0xFFFFFF,
-        );
+        game::draw_gui(&mut buffer, &score, &highscore);
         //Process input
         game::process_input(&window, &mut player, &mut death_block, &mut score);
         //Update state
@@ -70,6 +68,8 @@ fn main() {
         actors::death_block::draw_death_block(&mut buffer, &death_block);
         //Detect collision
         game::detect_collision(&mut player, &mut death_block);
+        //Update highscore
+       game::update_highscore(&mut player, &score, &mut highscore);
         // Update the window
         window.update_with_buffer(&buffer, WIDTH, HEIGHT).unwrap();
     }
