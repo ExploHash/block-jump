@@ -14,6 +14,7 @@ pub struct Player {
     pub state: PlayerState,
     pub color: usize,
     pub width: usize,
+    pub invisible: bool
 }
 
 pub fn initialize_player() -> Player {
@@ -23,6 +24,7 @@ pub fn initialize_player() -> Player {
         width: 40,
         state: PlayerState::Spawning,
         color: 0xFFFFFF,
+        invisible: false
     };
 }
 
@@ -46,7 +48,7 @@ pub fn update_player_state(player: &mut Player) {
             if player.pos_y < HEIGHT - player.width - 6 {
                 player.pos_y += 6;
             } else {
-                player.color = 0x000000;
+                player.invisible = true;
             }
         }
         PlayerState::Spawning => {
@@ -61,6 +63,9 @@ pub fn update_player_state(player: &mut Player) {
 }
 
 pub fn draw_player(buffer: &mut Vec<u32>, player: &Player) {
+    if player.invisible {
+        return;
+    }
     render::draw_rectangle(
         buffer,
         &player.pos_x,

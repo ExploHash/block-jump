@@ -43,10 +43,27 @@ pub fn draw_rectangle(
 ) {
     for y in 0..*width {
         for x in 0..*width {
-            buffer[(((start_y + y - 1) * WIDTH) + start_x + x) as usize] = color as u32;
+            buffer[(((start_y + y) * WIDTH) + start_x + x) as usize] = color as u32;
         }
     }
 }
+
+pub fn draw_nonrectangle(
+    buffer: &mut Vec<u32>,
+    start_x: &usize,
+    start_y: &usize,
+    width: &usize,
+    height: &usize,
+    color: usize,
+) {
+    for y in 0..*height {
+        for x in 0..*width {
+            buffer[(((start_y + y) * WIDTH) + start_x + x) as usize] = color as u32;
+        }
+    }
+}
+
+
 
 pub fn draw_background(buffer: &mut Vec<u32>) {
     let color: u32 = 0x000000;

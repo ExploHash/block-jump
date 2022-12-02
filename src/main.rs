@@ -69,7 +69,7 @@ fn main() {
         //Detect collision
         game::detect_collision(&mut player, &mut death_block);
         //Update highscore
-       game::update_highscore(&mut player, &score, &mut highscore);
+        game::update_highscore(&mut player, &score, &mut highscore);
         // Update the window
         window.update_with_buffer(&buffer, WIDTH, HEIGHT).unwrap();
     }

@@ -2,9 +2,9 @@ use crate::actors::{death_block, player};
 use death_block::DeathBlock;
 use player::{Player, PlayerState};
 
+use crate::render;
 use minifb::{Key, Window};
 use std::time::SystemTime;
-use crate::render;
 
 use std::fs;
 
@@ -58,49 +58,78 @@ pub fn process_input(
 }
 
 pub fn detect_collision(player: &mut Player, death_block: &mut DeathBlock) {
-    if 
-        is_point_in_rect(&death_block.pos_x, &death_block.pos_y, &death_block.width, &player.pos_x, &player.pos_y) || 
-        is_point_in_rect(&death_block.pos_x, &death_block.pos_y, &death_block.width, &(&player.pos_x + &player.width), &player.pos_y) ||
-        is_point_in_rect(&death_block.pos_x, &death_block.pos_y, &death_block.width, &player.pos_x, &(&player.pos_y + &player.width)) ||
-        is_point_in_rect(&death_block.pos_x, &death_block.pos_y, &death_block.width, &(&player.pos_x + &player.width), &(&player.pos_y + &player.width))
-    {
+    if is_point_in_rect(
+        &death_block.pos_x,
+        &death_block.pos_y,
+        &death_block.width,
+        &player.pos_x,
+        &player.pos_y,
+    ) || is_point_in_rect(
+        &death_block.pos_x,
+        &death_block.pos_y,
+        &death_block.width,
+        &(&player.pos_x + &player.width),
+        &player.pos_y,
+    ) || is_point_in_rect(
+        &death_block.pos_x,
+        &death_block.pos_y,
+        &death_block.width,
+        &player.pos_x,
+        &(&player.pos_y + &player.width),
+    ) || is_point_in_rect(
+        &death_block.pos_x,
+        &death_block.pos_y,
+        &death_block.width,
+        &(&player.pos_x + &player.width),
+        &(&player.pos_y + &player.width),
+    ) {
         player.state = PlayerState::Dieing;
-        death_block.color = 0x000000;
+        death_block.invisible = true;
     }
 }
 
-
-fn is_point_in_rect(rect_x: &usize, rect_y: &usize, width: &usize, point_x: &usize, point_y: &usize) -> bool{
-    return rect_x <= point_x && rect_x + width >= *point_x &&
-        rect_y <= point_y && rect_y + width >= *point_y;
+fn is_point_in_rect(
+    rect_x: &usize,
+    rect_y: &usize,
+    width: &usize,
+    point_x: &usize,
+    point_y: &usize,
+) -> bool {
+    return rect_x <= point_x
+        && rect_x + width >= *point_x
+        && rect_y <= point_y
+        && rect_y + width >= *point_y;
 }
 
 pub fn update_highscore(player: &mut Player, score: &usize, highscore: &mut usize) {
     if let PlayerState::Dieing = player.state {
         if score > &*highscore {
-            fs::write("highscore.txt", score.to_string())
-                .expect("Failed writing highscore file");
-           *highscore = *score;
+            fs::write("highscore.txt", score.to_string()).expect("Failed writing highscore file");
+            *highscore = *score;
         }
     }
 }
 
-pub fn draw_gui(buffer: &mut Vec<u32>, score: &usize, highscore: &usize){
-    render::draw_background(buffer);
+pub fn draw_gui(buffer: &mut Vec<u32>, score: &usize, highscore: &usize) {
+    //Draw green grass
+    render::draw_nonrectangle(buffer, &0, &240, &crate::WIDTH, &120, 0x61de45);
+    //Draw blue sky
+    render::draw_nonrectangle(buffer, &0, &0, &crate::WIDTH, &240, 0x87c6e8);
     //Draw Points
     render::render_text(
         buffer,
         &("Score: ".to_owned() + &score.to_string()),
         &50,
         &50,
-        0xFFFFFF,
+        0x000,
     );
 
+    //Draw highscore
     render::render_text(
         buffer,
         &("HighScore: ".to_owned() + &highscore.to_string()),
         &200,
         &50,
-        0xFFFF
-    )
+        0x000,
+    );
 }

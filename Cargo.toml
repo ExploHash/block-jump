@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 minifb = "0.23"
 font8x8 = "0.3.1"
+rand = "0.8.5"
