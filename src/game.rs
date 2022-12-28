@@ -44,9 +44,15 @@ pub fn process_input(
     death_block: &mut DeathBlock,
     score: &mut usize,
 ) {
-    if window.is_key_down(Key::Space) {
+    if window.is_key_down(Key::Space) || window.is_key_down(Key::Up) {
         if let PlayerState::Existing = player.state {
             player.state = PlayerState::Jumping;
+        }
+    }
+
+    if window.is_key_down(Key::Down) {
+        if let PlayerState::Existing = player.state {
+            player.state = PlayerState::CrouchingDown;
         }
     }
 

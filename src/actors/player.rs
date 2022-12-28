@@ -6,6 +6,8 @@ pub enum PlayerState {
     Dieing,
     Spawning,
     Existing,
+    CrouchingDown,
+    CrouchingUp
 }
 
 pub struct Player {
@@ -14,6 +16,7 @@ pub struct Player {
     pub state: PlayerState,
     pub color: usize,
     pub width: usize,
+    pub height: usize,
     pub invisible: bool
 }
 
@@ -22,6 +25,7 @@ pub fn initialize_player() -> Player {
         pos_x: 100,
         pos_y: 100,
         width: 40,
+        height: 40,
         state: PlayerState::Spawning,
         color: 0xFFFFFF,
         invisible: false
@@ -57,6 +61,22 @@ pub fn update_player_state(player: &mut Player) {
             } else {
                 player.state = PlayerState::Existing;
             }
+        },
+        PlayerState::CrouchingDown => {
+            if player.pos_y < 230 {
+                player.pos_y += 1;
+                player.height -= 1;
+            } else {
+                player.state = PlayerState::CrouchingUp;
+            }
+        }
+        PlayerState::CrouchingUp => {
+            if player.pos_y >= 200 {
+                player.pos_y -= 1;
+                player.height += 1;
+            } else {
+                player.state = PlayerState::Existing;
+            }
         }
         _ => {}
     }
@@ -66,11 +86,12 @@ pub fn draw_player(buffer: &mut Vec<u32>, player: &Player) {
     if player.invisible {
         return;
     }
-    render::draw_rectangle(
+    render::draw_nonrectangle(
         buffer,
         &player.pos_x,
         &player.pos_y,
         &player.width,
+        &player.height,
         player.color,
     );
 }
